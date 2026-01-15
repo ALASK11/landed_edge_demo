@@ -2,13 +2,11 @@
 
 import { useCallback, useState } from "react"
 import DocumentUpload from "@/components/DocumentUpload"
-
-const requiredDocuments = [
-  "Proof of Identity",
-  "Proof of Address",
-  "Pay Stub",
-  "Bank Statement",
-]
+import {
+  detectDocumentType,
+  validateDocument,
+  requiredDocuments,
+} from "@/lib/documentProcessor"
 
 export default function UploadPage() {
   const [files, setFiles] = useState<Record<string, File>>({})
@@ -33,12 +31,24 @@ export default function UploadPage() {
       e.preventDefault()
       setIsDragging(false)
       const droppedFiles = Array.from(e.dataTransfer.files)
-      // For simplicity, we'll just add the first dropped file to the first document type
-      if (droppedFiles.length > 0 && requiredDocuments.length > 0) {
-        handleFileSelect(requiredDocuments[0], droppedFiles[0])
-      }
+
+      droppedFiles.forEach((file) => {
+        if (validateDocument(file)) {
+          const possibleDocTypes = detectDocumentType(file.name)
+          const availableSlot = possibleDocTypes.find(
+            (type) => !files[type]
+          )
+
+          if (availableSlot) {
+            handleFileSelect(availableSlot, file)
+          } else {
+            // Handle case where no slot is available, e.g., show a notification
+            console.warn(`No available slot for ${file.name}`)
+          }
+        }
+      })
     },
-    [handleFileSelect]
+    [handleFileSelect, files]
   )
 
   return (

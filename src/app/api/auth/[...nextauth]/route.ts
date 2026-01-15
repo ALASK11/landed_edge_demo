@@ -19,6 +19,12 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Always redirect to the upload page after sign in
+      return baseUrl + '/upload'
+    }
+  }
 })
 
 export { handler as GET, handler as POST }

@@ -1,0 +1,47 @@
+export const requiredDocuments = [
+  "PO1",
+  "PO2",
+  "INVOICE1",
+  "INVOICE2",
+  "PACKING_LIST",
+  "FORM_7501",
+  "BOL",
+  "PAYMENT",
+  "COST_WORKSHEET",
+  "ACCOUNTING_RECORD",
+  "STATEMENT_OF_FACTS",
+  "OTHER",
+] as const;
+
+export type DocumentType = (typeof requiredDocuments)[number];
+
+const keywordToDocType: [string, DocumentType[]][] = [
+    ["PO", ["PO1", "PO2"]],
+    ["PURCHASE ORDER", ["PO1", "PO2"]],
+    ["INVOICE", ["INVOICE1", "INVOICE2"]],
+    ["PACKING LIST", ["PACKING_LIST"]],
+    ["FORM_7501", ["FORM_7501"]],
+    ["7501", ["FORM_7501"]],
+    ["BOL", ["BOL"]],
+    ["BILL OF LADING", ["BOL"]],
+    ["PAYMENT", ["PAYMENT"]],
+    ["COST WORKSHEET", ["COST_WORKSHEET"]],
+    ["ACCOUNTING", ["ACCOUNTING_RECORD"]],
+    ["STATEMENT OF FACTS", ["STATEMENT_OF_FACTS"]],
+];
+
+export function detectDocumentType(fileName: string): DocumentType[] {
+    const upperFileName = fileName.toUpperCase();
+    for (const [keyword, docTypes] of keywordToDocType) {
+        if (upperFileName.includes(keyword)) {
+            return docTypes;
+        }
+    }
+    return ["OTHER"];
+}
+
+
+export const validateDocument = (file: File): boolean => {
+  // For now, validation always returns true as requested.
+  return true;
+};
