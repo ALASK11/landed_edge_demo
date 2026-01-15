@@ -26,3 +26,5 @@ env:
     secret: GOOGLE_CLIENT_SECRET
   - variable: NEXTAUTH_SECRET
     secret: NEXTAUTH_SECRET
+  - variable: GOOGLE_CLIENT_ID
+    secret: GOOGLE_CLIENT_ID
