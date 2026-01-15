@@ -28,4 +28,8 @@ env:
     secret: NEXTAUTH_SECRET
   - variable: GOOGLE_CLIENT_ID
     secret: GOOGLE_CLIENT_ID
-    version: 1
+  - variable: NEXTAUTH_URL
+    value: https://landed-edge-backed--plexiform-style-452205-h7.us-east4.hosted.app/
+    availability:
+      - BUILD
+      - RUNTIME
