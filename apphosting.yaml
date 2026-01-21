@@ -24,12 +24,10 @@ runConfig:
 env:
   - variable: GOOGLE_CLIENT_SECRET
     secret: GOOGLE_CLIENT_SECRET
-  - variable: NEXTAUTH_SECRET
-    secret: NEXTAUTH_SECRET
   - variable: GOOGLE_CLIENT_ID
     secret: GOOGLE_CLIENT_ID
-  - variable: NEXTAUTH_URL
-    value: https://landed-edge-backed--plexiform-style-452205-h7.us-east4.hosted.app/
+  - variable: GCS_BUCKET_NAME
+    value: plexiform-style-452205-h7.firebasestorage.app
     availability:
       - BUILD
       - RUNTIME

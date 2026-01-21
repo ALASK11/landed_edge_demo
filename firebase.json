@@ -10,5 +10,8 @@
       "functions"
     ],
     "alwaysDeployFromSource": true
+  },
+  "storage": {
+    "rules": "storage.rules"
   }
 }

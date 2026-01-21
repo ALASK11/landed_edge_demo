@@ -1,14 +1,37 @@
 "use client"
 
-import { useSession, signIn, signOut } from "next-auth/react"
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+} from "firebase/auth"
+import { auth } from "@/lib/firebase/client"
+import { useAuth } from "./AuthProvider"
 
 export default function SignInButton() {
-  const { data: session } = useSession()
+  const { user } = useAuth()
+  const provider = new GoogleAuthProvider()
 
-  if (session) {
+  const signIn = async () => {
+    try {
+      await signInWithPopup(auth, provider)
+    } catch (error) {
+      console.error("Error signing in with Google", error)
+    }
+  }
+
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth)
+    } catch (error) {
+      console.error("Error signing out", error)
+    }
+  }
+
+  if (user) {
     return (
       <button
-        onClick={() => signOut()}
+        onClick={signOut}
         className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
       >
         Sign out
@@ -17,7 +40,7 @@ export default function SignInButton() {
   }
   return (
     <button
-      onClick={() => signIn("google")}
+      onClick={signIn}
       className="rounded-full bg-zinc-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800"
     >
       Sign in with Google

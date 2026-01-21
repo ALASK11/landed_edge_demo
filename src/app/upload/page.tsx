@@ -16,16 +16,25 @@ export interface UploadedFile {
   buyer: string
   value: string
   parseStatus: "Pending" | "Success" | "Error"
+  gcsUrl?: string
 }
+
+import { useAuth } from "@/components/AuthProvider"
 
 export default function UploadPage() {
   const [files, setFiles] = useState<Record<string, UploadedFile>>({})
   const [isFullReportModalOpen, setIsFullReportModalOpen] = useState(false)
   const [selectedFileForReport, setSelectedFileForReport] =
     useState<UploadedFile | null>(null)
+  const { user } = useAuth()
 
   const handleFileSelect = useCallback(
     async (documentName: string, file: File, notes: string) => {
+      if (!user) {
+        console.error("No user is signed in.")
+        return
+      }
+
       // Set initial state with Pending status
       setFiles((prevFiles) => ({
         ...prevFiles,
@@ -42,16 +51,47 @@ export default function UploadPage() {
         },
       }))
 
-      // Simulate parsing
-      const parsedData = await parseDocument(file, notes, documentName)
+      // Upload the file
+      const formData = new FormData()
+      formData.append("file", file)
 
-      // Update with parsed data
-      setFiles((prevFiles) => ({
-        ...prevFiles,
-        [documentName]: parsedData,
-      }))
+      try {
+        const token = await user.getIdToken()
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        })
+
+        if (!response.ok) {
+          throw new Error("File upload failed")
+        }
+
+        const { url: gcsUrl } = await response.json()
+
+        // Simulate parsing
+        const parsedData = await parseDocument(file, notes, documentName)
+
+        // Update with parsed data and GCS URL
+        setFiles((prevFiles) => ({
+          ...prevFiles,
+          [documentName]: { ...parsedData, gcsUrl },
+        }))
+      } catch (error) {
+        console.error(error)
+        // Update status to Error
+        setFiles((prevFiles) => ({
+          ...prevFiles,
+          [documentName]: {
+            ...prevFiles[documentName],
+            parseStatus: "Error",
+          },
+        }))
+      }
     },
-    []
+    [user]
   )
 
   const handleDelete = useCallback((documentName: string) => {
