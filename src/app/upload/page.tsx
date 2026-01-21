@@ -20,6 +20,8 @@ export interface UploadedFile {
 }
 
 import { useAuth } from "@/components/AuthProvider"
+import { storage } from "@/lib/firebase/client"
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 
 export default function UploadPage() {
   const [files, setFiles] = useState<Record<string, UploadedFile>>({})
@@ -51,25 +53,10 @@ export default function UploadPage() {
         },
       }))
 
-      // Upload the file
-      const formData = new FormData()
-      formData.append("file", file)
-
       try {
-        const token = await user.getIdToken()
-        const response = await fetch("/api/upload", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        })
-
-        if (!response.ok) {
-          throw new Error("File upload failed")
-        }
-
-        const { url: gcsUrl } = await response.json()
+        const storageRef = ref(storage, `uploads/${user.uid}/${file.name}`)
+        await uploadBytes(storageRef, file)
+        const gcsUrl = await getDownloadURL(storageRef)
 
         // Simulate parsing
         const parsedData = await parseDocument(file, notes, documentName)
