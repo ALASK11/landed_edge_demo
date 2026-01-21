@@ -3,13 +3,13 @@ import { initializeApp, getApps } from "firebase/app"
 import { getAuth } from "firebase/auth"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBTIaRike9w4GuUMdp8UdQzEX0jz3C6WH0",
-  authDomain: "plexiform-style-452205-h7.firebaseapp.com",
-  projectId: "plexiform-style-452205-h7",
-  storageBucket: "plexiform-style-452205-h7.firebasestorage.app",
-  messagingSenderId: "456981226486",
-  appId: "1:456981226486:web:d2cb4bcc88f83e0a009dd7",
-  measurementId: "G-BEG13VVPV4",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
 // Initialize Firebase
